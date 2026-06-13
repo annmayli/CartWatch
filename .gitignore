@@ -7,3 +7,4 @@ backend/data.sqlite-shm
 backend/data.sqlite-wal
 .env
 .env.local
+.understand-anything/
