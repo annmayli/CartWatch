@@ -1,0 +1,17 @@
+{
+  "name": "wishwatch",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Save products from any online store and watch their prices over time.",
+  "scripts": {
+    "postinstall": "npm install --prefix backend && npm install --prefix dashboard",
+    "dev:backend": "npm run dev --prefix backend",
+    "dev:dashboard": "npm run dev --prefix dashboard",
+    "dev": "concurrently -n backend,dashboard -c blue,magenta \"npm:dev:backend\" \"npm:dev:dashboard\"",
+    "build": "npm run build --prefix dashboard",
+    "start": "npm start --prefix backend"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}

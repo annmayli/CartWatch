@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header>
+      <div class="brand">
+        <div class="logo">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+            <path d="M12 21s-7.5-4.6-9.6-9.4C.7 7.6 3.6 4 7.4 4c2 0 3.5 1 4.6 2.5C13.1 5 14.6 4 16.6 4c3.8 0 6.7 3.6 5 7.6C19.5 16.4 12 21 12 21z" />
+          </svg>
+        </div>
+        <div>
+          <div class="title">WishWatch</div>
+          <div class="subtitle">Price Tracker</div>
+        </div>
+      </div>
+      <a id="open-dashboard" href="#" class="link">Open dashboard ↗</a>
+    </header>
+
+    <nav class="tabs">
+      <button class="tab active" data-tab="save">Save item</button>
+      <button class="tab" data-tab="lists">My lists</button>
+    </nav>
+
+    <main>
+      <section id="tab-save" class="tab-panel active">
+        <form id="save-form">
+          <label>Product name
+            <input id="f-name" required placeholder="Sony WH-1000XM5" />
+          </label>
+          <label>Product link
+            <input id="f-link" type="url" placeholder="https://store.example.com/product" />
+          </label>
+          <label>Image URL
+            <input id="f-image" type="url" placeholder="https://..." />
+          </label>
+          <div class="row">
+            <label>Initial price
+              <input id="f-initial" type="number" step="0.01" min="0" placeholder="199.99" />
+            </label>
+            <label>Current price
+              <input id="f-current" type="number" step="0.01" min="0" placeholder="(optional)" />
+            </label>
+          </div>
+          <label>Save to list
+            <select id="f-list"></select>
+          </label>
+          <button class="primary" type="submit">Save item</button>
+          <div id="save-status" class="status"></div>
+        </form>
+
+        <h3>Recently saved</h3>
+        <ul id="recent" class="recent"></ul>
+      </section>
+
+      <section id="tab-lists" class="tab-panel">
+        <form id="new-list-form" class="row">
+          <input id="new-list-name" placeholder="New list name" />
+          <button class="primary" type="submit">Add</button>
+        </form>
+        <ul id="lists" class="lists"></ul>
+      </section>
+    </main>
+
+    <footer>
+      <span id="sync-status" class="status muted">Local only</span>
+      <button id="sync-now" class="link">Sync now</button>
+    </footer>
+
+    <script src="popup.js" type="module"></script>
+  </body>
+</html>
