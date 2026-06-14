@@ -148,6 +148,6 @@ app.post("/api/sync", (req, res) => {
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
-  console.log(`WishWatch backend listening on http://localhost:${PORT}`);
+  console.log(`CartWatch backend listening on http://localhost:${PORT}`);
   startPriceMonitor();
 });

@@ -1,11 +1,11 @@
 {
   "manifest_version": 3,
-  "name": "WishWatch",
+  "name": "CartWatch",
   "version": "0.1.0",
   "description": "Save products from any online store and monitor their prices.",
   "action": {
     "default_popup": "popup.html",
-    "default_title": "WishWatch",
+    "default_title": "CartWatch",
     "default_icon": {
       "16": "icons/icon16.png",
       "32": "icons/icon32.png",

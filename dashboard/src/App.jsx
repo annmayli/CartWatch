@@ -30,7 +30,7 @@ export default function App() {
             </svg>
           </div>
           <div>
-            <div className="text-sm font-semibold leading-tight">WishWatch</div>
+            <div className="text-sm font-semibold leading-tight">CartWatch</div>
             <div className="text-xs text-slate-500">Price Tracker</div>
           </div>
         </div>
@@ -113,7 +113,7 @@ export default function App() {
       <main className="flex-1 overflow-y-auto">
         <header className="sticky top-0 z-10 border-b border-slate-200 bg-white/80 px-6 py-3 backdrop-blur dark:border-slate-800 dark:bg-slate-950/70">
           <div className="flex items-center justify-between">
-            <h1 className="text-lg font-semibold">WishWatch</h1>
+            <h1 className="text-lg font-semibold">CartWatch</h1>
             <button className="btn btn-primary md:hidden" onClick={() => setAdding(true)}>
               + Add
             </button>

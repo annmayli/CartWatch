@@ -1,4 +1,4 @@
-# WishWatch
+# CartWatch
 
 A small full-stack app for saving products from any online store and watching
 their prices over time. It has three parts:
@@ -72,12 +72,12 @@ npm run dev:dashboard   # equivalent to: npm run dev --prefix dashboard
 You should see:
 
 ```
-WishWatch backend listening on http://localhost:4000
+CartWatch backend listening on http://localhost:4000
 ```
 
 On first run it creates `backend/data.sqlite` and seeds two default lists
-(`Wishlist` and `Favorites`). A simulated price check runs ~2 seconds after
-boot and again every 15 minutes — see `backend/src/priceMonitor.js`.
+(`Wishlist` and `Favorites`). A price check runs ~2 seconds after boot and
+again every 15 minutes — see `backend/src/priceMonitor.js`.
 
 Quick sanity check:
 
@@ -161,13 +161,13 @@ This rewrites `extension/icons/icon{16,32,48,128}.png`.
 ## Project layout
 
 ```
-wishwatch/
+cartwatch/
 ├── backend/
 │   ├── src/
 │   │   ├── server.js         # Express app + routes
 │   │   ├── repo.js           # SQLite data layer
 │   │   ├── db.js             # schema + migrations + default lists
-│   │   └── priceMonitor.js   # cron-driven price checker (currently simulated)
+│   │   └── priceMonitor.js   # cron-driven price checker (Cheerio scraper)
 │   └── data.sqlite           # created at first run (gitignored)
 ├── dashboard/
 │   ├── src/
@@ -188,10 +188,13 @@ wishwatch/
 
 ## Notes & current limitations
 
-- **Prices are simulated.** `priceMonitor.js` currently random-walks each
-  item's price (biased slightly downward) so the chart populates. Swap
-  `fetchCurrentPrice` for a real scraper (e.g. Cheerio + per-store selectors)
-  when you're ready.
+- **Price scraping is best-effort.** `priceMonitor.js` fetches each item's
+  `productLink` and reads the price from JSON-LD `Product.offers`, common
+  `<meta>` tags (`product:price:amount`, `og:price:amount`), `itemprop="price"`,
+  and `data-price`. Items without a `productLink`, or whose pages don't expose
+  any of those signals, are skipped (no fake updates). Sites that gate behind
+  JS rendering or aggressive bot detection won't work — consider per-store
+  selectors or a headless browser when you outgrow this.
 - **Local-only, no auth.** The backend listens on `localhost` and tags every
   row with `user_id = 'local'`. Don't expose it publicly as-is.
 - **SQLite lives next to the server** at `backend/data.sqlite` (gitignored).
