@@ -138,7 +138,10 @@ export async function runPriceCheck({ verbose = false } = {}) {
   let updated = 0;
   let skipped = 0;
   let failed = 0;
+  let checked = 0;
   for (const item of items) {
+    if (item.purchased) continue;
+    checked++;
     try {
       const price = await fetchCurrentPrice(item);
       if (price == null) {
@@ -161,10 +164,10 @@ export async function runPriceCheck({ verbose = false } = {}) {
   }
   if (verbose) {
     console.log(
-      `[price-monitor] checked ${items.length} items, ${updated} updated, ${skipped} skipped, ${failed} failed`
+      `[price-monitor] checked ${checked} items, ${updated} updated, ${skipped} skipped, ${failed} failed`
     );
   }
-  return { checked: items.length, updated, skipped, failed };
+  return { checked, updated, skipped, failed };
 }
 
 let started = false;

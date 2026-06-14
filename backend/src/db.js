@@ -30,7 +30,8 @@ db.exec(`
     initial_price REAL NOT NULL,
     current_price REAL NOT NULL,
     date_created TEXT NOT NULL,
-    last_price_check TEXT
+    last_price_check TEXT,
+    purchased INTEGER NOT NULL DEFAULT 0
   );
 
   CREATE TABLE IF NOT EXISTS price_history (
@@ -53,6 +54,12 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_history_item ON price_history(item_id, checked_at);
   CREATE INDEX IF NOT EXISTS idx_deletions_at ON deletions(deleted_at);
 `);
+
+try {
+  db.exec(`ALTER TABLE items ADD COLUMN purchased INTEGER NOT NULL DEFAULT 0`);
+} catch {
+  // Column already exists on databases created after this migration.
+}
 
 const defaultLists = ["Wishlist", "Favorites"];
 const existing = db.prepare("SELECT name FROM lists WHERE is_default = 1").all().map((r) => r.name);

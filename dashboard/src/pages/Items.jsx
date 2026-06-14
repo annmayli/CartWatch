@@ -4,16 +4,25 @@ import { useStore } from "../store.jsx";
 import ItemCard from "../components/ItemCard.jsx";
 import AddItemModal from "../components/AddItemModal.jsx";
 
+const STATUS_FILTERS = [
+  { value: "active", label: "Active" },
+  { value: "purchased", label: "Purchased" },
+  { value: "all", label: "All" },
+];
+
 export default function Items() {
   const { listId } = useParams();
   const { items, lists, deleteItem, updateItem } = useStore();
   const [editing, setEditing] = useState(null);
   const [query, setQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("active");
 
   const list = listId ? lists.find((l) => l.id === listId) : null;
 
   const filtered = useMemo(() => {
     let arr = listId ? items.filter((i) => i.listId === listId) : items;
+    if (statusFilter === "active") arr = arr.filter((i) => !i.purchased);
+    else if (statusFilter === "purchased") arr = arr.filter((i) => i.purchased);
     if (query.trim()) {
       const q = query.toLowerCase();
       arr = arr.filter(
@@ -23,7 +32,7 @@ export default function Items() {
       );
     }
     return arr;
-  }, [items, listId, query]);
+  }, [items, listId, query, statusFilter]);
 
   return (
     <>
@@ -34,16 +43,34 @@ export default function Items() {
             {filtered.length} item{filtered.length === 1 ? "" : "s"}
           </p>
         </div>
-        <input
-          className="input max-w-xs"
-          placeholder="Search items…"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex rounded-lg border border-romantic-peach/50 bg-white/70 p-0.5">
+            {STATUS_FILTERS.map((f) => (
+              <button
+                key={f.value}
+                type="button"
+                className={`rounded-md px-2.5 py-1 text-xs font-medium transition ${
+                  statusFilter === f.value
+                    ? "bg-brand-600 text-white shadow-sm"
+                    : "text-ink-muted hover:text-ink"
+                }`}
+                onClick={() => setStatusFilter(f.value)}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+          <input
+            className="input max-w-xs"
+            placeholder="Search items…"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+        </div>
       </div>
 
       {filtered.length === 0 ? (
-        <EmptyState />
+        <EmptyState statusFilter={statusFilter} />
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {filtered.map((item) => (
@@ -52,6 +79,9 @@ export default function Items() {
               item={item}
               lists={lists}
               onEdit={setEditing}
+              onTogglePurchased={async (i) => {
+                await updateItem(i.id, { purchased: !i.purchased });
+              }}
               onDelete={async (i) => {
                 if (confirm(`Delete "${i.name}"?`)) await deleteItem(i.id);
               }}
@@ -68,14 +98,25 @@ export default function Items() {
   );
 }
 
-function EmptyState() {
+function EmptyState({ statusFilter }) {
+  const message =
+    statusFilter === "purchased"
+      ? "No purchased items yet. Mark something as purchased from its detail page or card menu."
+      : statusFilter === "active"
+      ? "No active items. Add a product or switch to Purchased / All to see more."
+      : "No items yet.";
+
   return (
     <div className="card flex flex-col items-center justify-center px-6 py-16 text-center">
-      <div className="mb-3 text-5xl"></div>
-      <h3 className="mb-1 text-lg font-semibold">No items yet</h3>
+      <h3 className="mb-1 text-lg font-semibold">Nothing here</h3>
       <p className="max-w-sm text-sm text-ink-muted">
-        Click <span className="font-medium">+ Add item</span> in the sidebar to save a product, or
-        use the Chrome extension popup while browsing a store.
+        {message}{" "}
+        {statusFilter !== "purchased" && (
+          <>
+            Click <span className="font-medium">+ Add item</span> in the sidebar, or use the
+            Chrome extension while browsing a store.
+          </>
+        )}
       </p>
     </div>
   );

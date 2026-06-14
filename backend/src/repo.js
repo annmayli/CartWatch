@@ -13,6 +13,7 @@ const itemRow = (r) =>
     currentPrice: r.current_price,
     dateCreated: r.date_created,
     lastPriceCheck: r.last_price_check,
+    purchased: !!r.purchased,
   };
 
 const listRow = (r) =>
@@ -92,8 +93,8 @@ export const repo = {
     const initial = Number(input.initialPrice ?? input.currentPrice ?? 0);
     const current = Number(input.currentPrice ?? initial);
     db.prepare(
-      `INSERT INTO items (id, list_id, name, image_url, product_link, store, initial_price, current_price, date_created, last_price_check)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      `INSERT INTO items (id, list_id, name, image_url, product_link, store, initial_price, current_price, date_created, last_price_check, purchased)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     ).run(
       id,
       input.listId,
@@ -104,7 +105,8 @@ export const repo = {
       initial,
       current,
       input.dateCreated || now,
-      now
+      now,
+      input.purchased ? 1 : 0
     );
     db.prepare(
       "INSERT INTO price_history (id, item_id, price, checked_at) VALUES (?, ?, ?, ?)"
@@ -122,7 +124,7 @@ export const repo = {
     db.prepare(
       `UPDATE items
        SET list_id = ?, name = ?, image_url = ?, product_link = ?, store = ?,
-           initial_price = ?, current_price = ?
+           initial_price = ?, current_price = ?, purchased = ?
        WHERE id = ?`
     ).run(
       next.listId,
@@ -132,6 +134,7 @@ export const repo = {
       next.store,
       next.initialPrice,
       next.currentPrice,
+      next.purchased ? 1 : 0,
       id
     );
     if (patch.currentPrice != null && patch.currentPrice !== cur.currentPrice) {

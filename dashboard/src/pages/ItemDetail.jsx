@@ -18,7 +18,7 @@ import AddItemModal from "../components/AddItemModal.jsx";
 export default function ItemDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { lists, deleteItem } = useStore();
+  const { lists, deleteItem, updateItem } = useStore();
   const [item, setItem] = useState(null);
   const [error, setError] = useState(null);
   const [editing, setEditing] = useState(false);
@@ -74,7 +74,16 @@ export default function ItemDetail() {
         </div>
 
         <div className="card p-5">
-          <h1 className="font-serif text-xl font-semibold">{item.name}</h1>
+          <div className="flex flex-wrap items-start gap-2">
+            <h1 className={`font-serif text-xl font-semibold ${item.purchased ? "line-through text-ink-muted" : ""}`}>
+              {item.name}
+            </h1>
+            {item.purchased && (
+              <span className="rounded-full bg-ink/80 px-2 py-0.5 text-xs font-semibold text-white">
+                Purchased
+              </span>
+            )}
+          </div>
           <div className="mt-1 text-sm text-ink-muted">
             {item.store && <span>{item.store} · </span>}
             saved {timeAgo(item.dateCreated)}
@@ -105,7 +114,7 @@ export default function ItemDetail() {
           </div>
 
           <div className="mt-4 flex flex-wrap gap-2">
-            {item.productLink && (
+            {item.productLink && !item.purchased && (
               <a
                 href={item.productLink}
                 target="_blank"
@@ -115,6 +124,15 @@ export default function ItemDetail() {
                 Open product →
               </a>
             )}
+            <button
+              className={`btn ${item.purchased ? "btn-primary" : "btn-ghost"}`}
+              onClick={async () => {
+                const updated = await updateItem(item.id, { purchased: !item.purchased });
+                setItem((prev) => (prev ? { ...prev, ...updated } : prev));
+              }}
+            >
+              {item.purchased ? "Mark as not purchased" : "Mark as purchased"}
+            </button>
             <button className="btn btn-ghost" onClick={() => setEditing(true)}>Edit</button>
             <button
               className="btn btn-danger"
