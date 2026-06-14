@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useStore } from "../store.jsx";
 import ItemCard from "../components/ItemCard.jsx";
@@ -16,23 +16,44 @@ export default function Items() {
   const [editing, setEditing] = useState(null);
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("active");
+  const [storeFilter, setStoreFilter] = useState("");
 
   const list = listId ? lists.find((l) => l.id === listId) : null;
 
+  useEffect(() => {
+    setStoreFilter("");
+  }, [listId]);
+
+  const scopedItems = useMemo(
+    () => (listId ? items.filter((i) => i.listId === listId) : items),
+    [items, listId]
+  );
+
+  const storeOptions = useMemo(() => {
+    const stores = new Set();
+    let hasEmpty = false;
+    for (const i of scopedItems) {
+      if (i.store) stores.add(i.store);
+      else hasEmpty = true;
+    }
+    return {
+      stores: [...stores].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" })),
+      hasEmpty,
+    };
+  }, [scopedItems]);
+
   const filtered = useMemo(() => {
-    let arr = listId ? items.filter((i) => i.listId === listId) : items;
+    let arr = scopedItems;
     if (statusFilter === "active") arr = arr.filter((i) => !i.purchased);
     else if (statusFilter === "purchased") arr = arr.filter((i) => i.purchased);
+    if (storeFilter === "__none__") arr = arr.filter((i) => !i.store);
+    else if (storeFilter) arr = arr.filter((i) => i.store === storeFilter);
     if (query.trim()) {
       const q = query.toLowerCase();
-      arr = arr.filter(
-        (i) =>
-          i.name.toLowerCase().includes(q) ||
-          (i.store || "").toLowerCase().includes(q)
-      );
+      arr = arr.filter((i) => i.name.toLowerCase().includes(q));
     }
     return arr;
-  }, [items, listId, query, statusFilter]);
+  }, [scopedItems, query, statusFilter, storeFilter]);
 
   return (
     <>
@@ -60,9 +81,24 @@ export default function Items() {
               </button>
             ))}
           </div>
+          {storeOptions.stores.length > 0 || storeOptions.hasEmpty ? (
+            <select
+              className="input w-auto min-w-[8rem]"
+              value={storeFilter}
+              onChange={(e) => setStoreFilter(e.target.value)}
+            >
+              <option value="">All stores</option>
+              {storeOptions.stores.map((store) => (
+                <option key={store} value={store}>
+                  {store}
+                </option>
+              ))}
+              {storeOptions.hasEmpty && <option value="__none__">No store</option>}
+            </select>
+          ) : null}
           <input
             className="input max-w-xs"
-            placeholder="Search items…"
+            placeholder="Search by name…"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
@@ -70,7 +106,7 @@ export default function Items() {
       </div>
 
       {filtered.length === 0 ? (
-        <EmptyState statusFilter={statusFilter} />
+        <EmptyState statusFilter={statusFilter} storeFilter={storeFilter} />
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {filtered.map((item) => (
@@ -98,9 +134,11 @@ export default function Items() {
   );
 }
 
-function EmptyState({ statusFilter }) {
+function EmptyState({ statusFilter, storeFilter }) {
   const message =
-    statusFilter === "purchased"
+    storeFilter
+      ? "No items match this store filter. Try a different store or clear the filter."
+      : statusFilter === "purchased"
       ? "No purchased items yet. Mark something as purchased from its detail page or card menu."
       : statusFilter === "active"
       ? "No active items. Add a product or switch to Purchased / All to see more."
