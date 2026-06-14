@@ -55,7 +55,7 @@ export default function AddItemModal({ onClose, initial }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/30 px-4 backdrop-blur-sm"
       onClick={onClose}
     >
       <div
@@ -63,7 +63,7 @@ export default function AddItemModal({ onClose, initial }) {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-4 flex items-start justify-between">
-          <h2 className="text-lg font-semibold">{editing ? "Edit item" : "Save a product"}</h2>
+          <h2 className="font-serif text-lg font-semibold">{editing ? "Edit item" : "Save a product"}</h2>
           <button onClick={onClose} className="btn btn-ghost p-1">×</button>
         </div>
         <form onSubmit={submit} className="space-y-3">
@@ -143,7 +143,7 @@ export default function AddItemModal({ onClose, initial }) {
             </div>
           </div>
 
-          {err && <div className="text-sm text-rose-600">{err}</div>}
+          {err && <div className="text-sm text-brand-700">{err}</div>}
 
           <div className="flex justify-end gap-2 pt-2">
             <button type="button" className="btn btn-ghost" onClick={onClose}>Cancel</button>

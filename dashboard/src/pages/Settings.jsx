@@ -11,8 +11,8 @@ export default function Settings() {
   return (
     <div className="mx-auto max-w-2xl space-y-6">
       <div>
-        <h2 className="text-2xl font-bold">Settings</h2>
-        <p className="text-sm text-slate-500">Configure how the price tracker behaves.</p>
+        <h2 className="page-title">Settings</h2>
+        <p className="text-sm text-ink-muted">Configure how the price tracker behaves.</p>
       </div>
 
       <Section title="Price monitoring">
@@ -60,7 +60,7 @@ export default function Settings() {
         />
       </Section>
 
-      <p className="text-xs text-slate-500">
+      <p className="text-xs text-ink-muted">
         Settings are stored locally in this browser. Backend is at{" "}
         <code>{import.meta.env.VITE_API_BASE || "http://localhost:4000"}</code>.
       </p>
@@ -91,11 +91,11 @@ function Toggle({ label, description, checked, onChange }) {
     <label className="flex cursor-pointer items-start justify-between gap-4">
       <div>
         <div className="text-sm font-medium">{label}</div>
-        {description && <div className="text-xs text-slate-500">{description}</div>}
+        {description && <div className="text-xs text-ink-muted">{description}</div>}
       </div>
       <span
         className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition ${
-          checked ? "bg-brand-600" : "bg-slate-300 dark:bg-slate-700"
+          checked ? "bg-brand-600" : "bg-romantic-peach/80"
         }`}
         onClick={() => onChange(!checked)}
       >

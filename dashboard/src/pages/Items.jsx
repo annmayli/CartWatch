@@ -29,8 +29,8 @@ export default function Items() {
     <>
       <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 className="text-2xl font-bold">{list ? list.name : "All items"}</h2>
-          <p className="text-sm text-slate-500">
+          <h2 className="page-title">{list ? list.name : "All items"}</h2>
+          <p className="text-sm text-ink-muted">
             {filtered.length} item{filtered.length === 1 ? "" : "s"}
           </p>
         </div>
@@ -73,7 +73,7 @@ function EmptyState() {
     <div className="card flex flex-col items-center justify-center px-6 py-16 text-center">
       <div className="mb-3 text-5xl"></div>
       <h3 className="mb-1 text-lg font-semibold">No items yet</h3>
-      <p className="max-w-sm text-sm text-slate-500">
+      <p className="max-w-sm text-sm text-ink-muted">
         Click <span className="font-medium">+ Add item</span> in the sidebar to save a product, or
         use the Chrome extension popup while browsing a store.
       </p>

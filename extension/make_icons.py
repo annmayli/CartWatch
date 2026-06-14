@@ -2,7 +2,7 @@
 from PIL import Image, ImageDraw
 from pathlib import Path
 
-BRAND = (104, 69, 255)
+BRAND = (227, 145, 159)  # #E3919F — romantic rose, matches dashboard favicon/logo
 WHITE = (255, 255, 255)
 
 
@@ -40,4 +40,11 @@ here = Path(__file__).parent / "icons"
 here.mkdir(exist_ok=True)
 for s in (16, 32, 48, 128):
     make(s, here / f"icon{s}.png")
+
+dashboard_public = Path(__file__).parent.parent / "dashboard" / "public"
+dashboard_public.mkdir(exist_ok=True)
+for s in (16, 32):
+    make(s, dashboard_public / f"favicon{s}.png")
+
 print("wrote", *(f"icons/icon{s}.png" for s in (16, 32, 48, 128)))
+print("wrote", *(f"dashboard/public/favicon{s}.png" for s in (16, 32)))

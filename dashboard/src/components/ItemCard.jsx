@@ -11,7 +11,7 @@ export default function ItemCard({ item, onEdit, onDelete, onMove, lists }) {
     <div className="card group flex flex-col overflow-hidden">
       <Link
         to={`/items/${item.id}`}
-        className="relative block aspect-square overflow-hidden bg-slate-100 dark:bg-slate-800"
+        className="relative block aspect-square overflow-hidden bg-romantic-lime/40"
       >
         {item.imageUrl ? (
           <img
@@ -23,7 +23,7 @@ export default function ItemCard({ item, onEdit, onDelete, onMove, lists }) {
             }}
           />
         ) : (
-          <div className="flex h-full items-center justify-center text-4xl text-slate-300">
+          <div className="flex h-full items-center justify-center text-4xl text-romantic-peach">
             
           </div>
         )}
@@ -31,10 +31,10 @@ export default function ItemCard({ item, onEdit, onDelete, onMove, lists }) {
           <span
             className={`absolute left-2 top-2 rounded-full px-2 py-0.5 text-xs font-semibold shadow ${
               fellHard
-                ? "bg-emerald-500 text-white"
+                ? "bg-romantic-mint text-ink"
                 : rose
-                ? "bg-rose-500 text-white"
-                : "bg-slate-500 text-white"
+                ? "bg-brand-600 text-white"
+                : "bg-ink-muted text-white"
             }`}
           >
             {fellHard ? "↓" : "↑"} {formatPrice(Math.abs(delta.diff))}
@@ -45,14 +45,14 @@ export default function ItemCard({ item, onEdit, onDelete, onMove, lists }) {
         <Link to={`/items/${item.id}`} className="line-clamp-2 text-sm font-medium hover:text-brand-600">
           {item.name}
         </Link>
-        <div className="text-xs text-slate-500">
+        <div className="text-xs text-ink-muted">
           {item.store ? `${item.store} · ` : ""}saved {timeAgo(item.dateCreated)}
         </div>
         <div className="mt-auto flex items-end justify-between pt-2">
           <div>
             <div className="text-lg font-semibold">{formatPrice(item.currentPrice)}</div>
             {delta && delta.diff !== 0 && (
-              <div className="text-xs text-slate-500 line-through">
+              <div className="text-xs text-ink-faint line-through">
                 {formatPrice(item.initialPrice)}
               </div>
             )}
@@ -63,7 +63,7 @@ export default function ItemCard({ item, onEdit, onDelete, onMove, lists }) {
             </button>
             <select
               title="Move to list"
-              className="rounded-md border border-slate-200 bg-white px-1 py-1 text-xs dark:border-slate-700 dark:bg-slate-900"
+              className="rounded-md border border-romantic-peach/50 bg-white/80 px-1 py-1 text-xs"
               value={item.listId}
               onChange={(e) => onMove(item, e.target.value)}
             >

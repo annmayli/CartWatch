@@ -22,16 +22,16 @@ export default function App() {
 
   return (
     <div className="flex h-full">
-      <aside className="hidden w-64 shrink-0 flex-col border-r border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900 md:flex">
+      <aside className="hidden w-64 shrink-0 flex-col border-r border-white/60 bg-white/55 p-4 backdrop-blur-md md:flex">
         <div className="mb-6 flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600 text-white shadow">
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-brand-600 text-white shadow-soft">
             <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor">
               <path d="M12 21s-7.5-4.6-9.6-9.4C.7 7.6 3.6 4 7.4 4c2 0 3.5 1 4.6 2.5C13.1 5 14.6 4 16.6 4c3.8 0 6.7 3.6 5 7.6C19.5 16.4 12 21 12 21z" />
             </svg>
           </div>
           <div>
-            <div className="text-sm font-semibold leading-tight">CartWatch</div>
-            <div className="text-xs text-slate-500">Price Tracker</div>
+            <div className="font-serif text-sm font-semibold leading-tight text-ink">CartWatch</div>
+            <div className="text-xs text-ink-muted">Price Tracker</div>
           </div>
         </div>
 
@@ -40,11 +40,11 @@ export default function App() {
         </button>
 
         <div className="mb-2 flex items-center justify-between px-1">
-          <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <span className="text-xs font-semibold uppercase tracking-wide text-ink-muted">
             Lists
           </span>
           <button
-            className="rounded p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800"
+            className="rounded p-1 text-ink-muted hover:bg-romantic-peach/40 hover:text-ink"
             onClick={() => setCreatingList((v) => !v)}
             title="New list"
           >
@@ -87,7 +87,7 @@ export default function App() {
           ))}
         </nav>
 
-        <div className="mt-4 space-y-2 border-t border-slate-200 pt-4 dark:border-slate-800">
+        <div className="mt-4 space-y-2 border-t border-romantic-peach/50 pt-4">
           <button
             className="btn btn-ghost w-full justify-start"
             onClick={async () => {
@@ -101,7 +101,7 @@ export default function App() {
             to="/settings"
             className={({ isActive }) =>
               `btn w-full justify-start ${
-                isActive ? "bg-brand-50 text-brand-700 dark:bg-brand-500/10" : "btn-ghost"
+                isActive ? "bg-brand-50 font-medium text-brand-700" : "btn-ghost"
               }`
             }
           >
@@ -111,15 +111,15 @@ export default function App() {
       </aside>
 
       <main className="flex-1 overflow-y-auto">
-        <header className="sticky top-0 z-10 border-b border-slate-200 bg-white/80 px-6 py-3 backdrop-blur dark:border-slate-800 dark:bg-slate-950/70">
+        <header className="sticky top-0 z-10 border-b border-white/60 bg-white/50 px-6 py-3 backdrop-blur-md">
           <div className="flex items-center justify-between">
-            <h1 className="text-lg font-semibold">CartWatch</h1>
+            <h1 className="font-serif text-lg font-semibold text-ink">CartWatch</h1>
             <button className="btn btn-primary md:hidden" onClick={() => setAdding(true)}>
               + Add
             </button>
           </div>
           {error && (
-            <div className="mt-2 rounded-md bg-rose-50 px-3 py-1.5 text-sm text-rose-700 dark:bg-rose-950/40 dark:text-rose-300">
+            <div className="mt-2 rounded-lg bg-brand-50 px-3 py-1.5 text-sm text-brand-700">
               {error}. Is the backend running on http://localhost:4000?
             </div>
           )}
@@ -127,7 +127,7 @@ export default function App() {
 
         <div className="px-6 py-6">
           {loading ? (
-            <div className="text-slate-500">Loading…</div>
+            <div className="text-ink-muted">Loading…</div>
           ) : (
             <Outlet />
           )}
@@ -146,16 +146,16 @@ function NavItem({ to, label, badge, onDelete }) {
         to={to}
         end
         className={({ isActive }) =>
-          `flex flex-1 items-center justify-between rounded-md px-2 py-1.5 text-sm ${
+          `flex flex-1 items-center justify-between rounded-lg px-2 py-1.5 text-sm ${
             isActive
-              ? "bg-brand-50 font-medium text-brand-700 dark:bg-brand-500/10 dark:text-brand-100"
-              : "text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+              ? "bg-brand-50 font-medium text-brand-700"
+              : "text-ink hover:bg-romantic-peach/35"
           }`
         }
       >
         <span className="truncate">{label}</span>
         {badge != null && (
-          <span className="ml-2 rounded bg-slate-200 px-1.5 text-xs text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+          <span className="ml-2 rounded-full bg-romantic-mint/60 px-1.5 text-xs text-ink-muted">
             {badge}
           </span>
         )}
@@ -163,7 +163,7 @@ function NavItem({ to, label, badge, onDelete }) {
       {onDelete && (
         <button
           onClick={onDelete}
-          className="ml-1 hidden rounded p-1 text-slate-400 hover:text-rose-600 group-hover:block"
+          className="ml-1 hidden rounded p-1 text-ink-faint hover:text-brand-700 group-hover:block"
           title="Delete list"
         >
           ×

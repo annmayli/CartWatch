@@ -37,8 +37,8 @@ export default function ItemDetail() {
     load();
   }, [id]);
 
-  if (error) return <div className="text-rose-600">{error}</div>;
-  if (!item) return <div className="text-slate-500">Loading…</div>;
+  if (error) return <div className="text-brand-700">{error}</div>;
+  if (!item) return <div className="text-ink-muted">Loading…</div>;
 
   const list = lists.find((l) => l.id === item.listId);
   const delta = priceDelta(item);
@@ -58,24 +58,24 @@ export default function ItemDetail() {
 
   return (
     <div className="mx-auto max-w-5xl">
-      <Link to={list ? `/lists/${list.id}` : "/items"} className="text-sm text-slate-500 hover:text-brand-600">
+      <Link to={list ? `/lists/${list.id}` : "/items"} className="text-sm text-ink-muted hover:text-brand-600">
         ← Back to {list ? list.name : "items"}
       </Link>
 
       <div className="mt-4 grid gap-6 md:grid-cols-[260px_1fr]">
         <div className="card overflow-hidden">
-          <div className="aspect-square bg-slate-100 dark:bg-slate-800">
+          <div className="aspect-square bg-romantic-lime/40">
             {item.imageUrl ? (
               <img src={item.imageUrl} alt={item.name} className="h-full w-full object-cover" />
             ) : (
-              <div className="flex h-full items-center justify-center text-5xl text-slate-300"></div>
+              <div className="flex h-full items-center justify-center text-5xl text-romantic-peach"></div>
             )}
           </div>
         </div>
 
         <div className="card p-5">
-          <h1 className="text-xl font-semibold">{item.name}</h1>
-          <div className="mt-1 text-sm text-slate-500">
+          <h1 className="font-serif text-xl font-semibold">{item.name}</h1>
+          <div className="mt-1 text-sm text-ink-muted">
             {item.store && <span>{item.store} · </span>}
             saved {timeAgo(item.dateCreated)}
             {list && (
@@ -90,12 +90,12 @@ export default function ItemDetail() {
             <div className="text-3xl font-bold">{formatPrice(item.currentPrice)}</div>
             {delta && delta.diff !== 0 && (
               <>
-                <div className="text-sm text-slate-500 line-through">{formatPrice(item.initialPrice)}</div>
+                <div className="text-sm text-ink-faint line-through">{formatPrice(item.initialPrice)}</div>
                 <span
                   className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
                     delta.diff < 0
-                      ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300"
-                      : "bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-300"
+                      ? "bg-romantic-mint/70 text-ink"
+                      : "bg-brand-100 text-brand-700"
                   }`}
                 >
                   {delta.diff < 0 ? "↓" : "↑"} {formatPrice(Math.abs(delta.diff))} ({delta.pct.toFixed(1)}%)
@@ -134,7 +134,7 @@ export default function ItemDetail() {
       <div className="card mt-6 p-5">
         <div className="mb-3 flex items-baseline justify-between">
           <h2 className="text-lg font-semibold">Price history</h2>
-          <div className="text-sm text-slate-500">
+          <div className="text-sm text-ink-muted">
             {data.length} data point{data.length === 1 ? "" : "s"} · low {formatPrice(minPrice)} · high{" "}
             {formatPrice(maxPrice)}
           </div>
@@ -142,11 +142,11 @@ export default function ItemDetail() {
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data} margin={{ left: 10, right: 20, top: 10, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.25)" />
-              <XAxis dataKey="label" tick={{ fontSize: 11 }} stroke="#94a3b8" />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(227, 145, 159, 0.15)" />
+              <XAxis dataKey="label" tick={{ fontSize: 11 }} stroke="#b89aa3" />
               <YAxis
                 tick={{ fontSize: 11 }}
-                stroke="#94a3b8"
+                stroke="#b89aa3"
                 domain={[
                   (dataMin) => Math.floor(dataMin * 0.95),
                   (dataMax) => Math.ceil(dataMax * 1.05),
@@ -155,19 +155,23 @@ export default function ItemDetail() {
               />
               <Tooltip
                 formatter={(v) => formatPrice(v)}
-                labelStyle={{ color: "#0f172a" }}
-                contentStyle={{ borderRadius: 8, border: "1px solid #e2e8f0" }}
+                labelStyle={{ color: "#4a3540" }}
+                contentStyle={{
+                  borderRadius: 12,
+                  border: "1px solid rgba(242, 192, 189, 0.6)",
+                  background: "rgba(255, 255, 255, 0.9)",
+                }}
               />
               <ReferenceLine
                 y={item.initialPrice}
-                stroke="#94a3b8"
+                stroke="#b89aa3"
                 strokeDasharray="4 4"
-                label={{ value: "initial", fontSize: 10, fill: "#64748b", position: "right" }}
+                label={{ value: "initial", fontSize: 10, fill: "#8b6b73", position: "right" }}
               />
               <Line
                 type="monotone"
                 dataKey="price"
-                stroke="#7c5cff"
+                stroke="#E3919F"
                 strokeWidth={2.5}
                 dot={{ r: 3 }}
                 activeDot={{ r: 5 }}
