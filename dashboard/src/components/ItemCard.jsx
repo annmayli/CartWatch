@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { formatPrice, priceDelta, timeAgo } from "../utils.js";
+import ProductImage from "./ProductImage.jsx";
 
 export default function ItemCard({ item, onEdit, onDelete, onMove, onTogglePurchased, lists }) {
   const delta = priceDelta(item);
@@ -17,20 +18,13 @@ export default function ItemCard({ item, onEdit, onDelete, onMove, onTogglePurch
         to={`/items/${item.id}`}
         className="relative block aspect-square overflow-hidden bg-romantic-lime/40"
       >
-        {item.imageUrl ? (
-          <img
-            src={item.imageUrl}
-            alt={item.name}
-            className={`h-full w-full object-cover transition group-hover:scale-105 ${
-              item.purchased ? "grayscale" : ""
-            }`}
-            onError={(e) => {
-              e.currentTarget.style.display = "none";
-            }}
-          />
-        ) : (
-          <div className="flex h-full items-center justify-center text-4xl text-romantic-peach" />
-        )}
+        <ProductImage
+          src={item.imageUrl}
+          productLink={item.productLink}
+          alt={item.name}
+          purchased={item.purchased}
+          imgClassName="h-full w-full object-cover transition group-hover:scale-105"
+        />
         {item.purchased && (
           <span className="absolute right-2 top-2 rounded-full bg-ink/80 px-2 py-0.5 text-xs font-semibold text-white shadow">
             Purchased

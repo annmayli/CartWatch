@@ -14,6 +14,7 @@ import { api } from "../api.js";
 import { useStore } from "../store.jsx";
 import { formatPrice, priceDelta, timeAgo } from "../utils.js";
 import AddItemModal from "../components/AddItemModal.jsx";
+import ProductImage from "../components/ProductImage.jsx";
 
 export default function ItemDetail() {
   const { id } = useParams();
@@ -65,11 +66,13 @@ export default function ItemDetail() {
       <div className="mt-4 grid gap-6 md:grid-cols-[260px_1fr]">
         <div className="card overflow-hidden">
           <div className="aspect-square bg-romantic-lime/40">
-            {item.imageUrl ? (
-              <img src={item.imageUrl} alt={item.name} className="h-full w-full object-cover" />
-            ) : (
-              <div className="flex h-full items-center justify-center text-5xl text-romantic-peach"></div>
-            )}
+            <ProductImage
+              src={item.imageUrl}
+              productLink={item.productLink}
+              alt={item.name}
+              purchased={item.purchased}
+              size="detail"
+            />
           </div>
         </div>
 

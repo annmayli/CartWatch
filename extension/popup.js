@@ -1,5 +1,6 @@
 import { getState, updateState, recountLists } from "./storage.js";
-import { syncWithBackend, DASHBOARD_URL } from "./sync.js";
+import { syncWithBackend, DASHBOARD_URL, API_BASE } from "./sync.js";
+import { resolveProductImageUrl } from "./imageUrl.js";
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -86,22 +87,42 @@ async function renderRecent() {
     return;
   }
   ul.innerHTML = recent
-    .map(
-      (it) => `
+    .map((it) => {
+      const img = resolveProductImageUrl(it.imageUrl, it.productLink);
+      const thumb = img
+        ? `<img src="${escapeHtml(img)}" alt="" onerror="this.replaceWith(Object.assign(document.createElement('div'),{style:'width:32px;height:32px;background:var(--lime);border-radius:6px'}))" />`
+        : `<div style="width:32px;height:32px;background:var(--lime);border-radius:6px"></div>`;
+      return `
       <li>
-        ${it.imageUrl ? `<img src="${it.imageUrl}" alt="" />` : `<div style="width:32px;height:32px;background:var(--border);border-radius:4px"></div>`}
+        ${thumb}
         <div class="meta">
           <div class="name">${escapeHtml(it.name)}</div>
           <div class="price">${fmtPrice(it.currentPrice)} · ${escapeHtml(it.store || "")}</div>
         </div>
       </li>
-    `
-    )
+    `;
+    })
     .join("");
 }
 
 function escapeHtml(s) {
   return String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+}
+
+async function fetchImageFromBackend(productLink) {
+  if (!productLink) return null;
+  try {
+    const res = await fetch(`${API_BASE}/api/fetch-image`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ productLink }),
+    });
+    if (!res.ok) return null;
+    const { imageUrl } = await res.json();
+    return resolveProductImageUrl(imageUrl, productLink);
+  } catch {
+    return null;
+  }
 }
 
 // ---------- Tab switching ----------
@@ -132,11 +153,16 @@ $("#save-form").addEventListener("submit", async (e) => {
   const link = $("#f-link").value.trim();
   const initial = parseFloat($("#f-initial").value) || 0;
   const current = parseFloat($("#f-current").value) || initial;
+  let imageUrl = resolveProductImageUrl($("#f-image").value.trim(), link) || "";
+  if (!imageUrl && link) {
+    imageUrl = (await fetchImageFromBackend(link)) || "";
+    if (imageUrl) $("#f-image").value = imageUrl;
+  }
   const item = {
     id: uuid(),
     name,
     productLink: link,
-    imageUrl: $("#f-image").value.trim(),
+    imageUrl,
     initialPrice: initial,
     currentPrice: current,
     listId: $("#f-list").value,
@@ -189,23 +215,32 @@ async function prefillFromActiveTab() {
   if (!(typeof chrome !== "undefined" && chrome.tabs?.query)) return;
   try {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    if (!tab) return;
+    if (!tab?.id) return;
     if (tab.url) $("#f-link").value = tab.url;
     if (tab.title) $("#f-name").value = tab.title.split(" | ")[0].split(" - ")[0].slice(0, 80);
 
-    if (chrome.scripting?.executeScript) {
-      const [{ result } = {}] = await chrome.scripting.executeScript({
-        target: { tabId: tab.id },
-        func: () => {
-          const og = (p) => document.querySelector(`meta[property="og:${p}"]`)?.content;
-          return {
-            image: og("image") || document.querySelector('img[src]')?.src || "",
-            title: og("title") || document.title,
-          };
-        },
-      });
-      if (result?.image) $("#f-image").value = result.image;
-      if (result?.title && !$("#f-name").value) $("#f-name").value = result.title;
+    let detected = null;
+    if (chrome.tabs.sendMessage) {
+      try {
+        detected = await chrome.tabs.sendMessage(tab.id, { type: "wishlist:detect" });
+      } catch {
+        if (chrome.scripting?.executeScript) {
+          await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ["content.js"] });
+          try {
+            detected = await chrome.tabs.sendMessage(tab.id, { type: "wishlist:detect" });
+          } catch {
+            // still unavailable on restricted pages
+          }
+        }
+      }
+    }
+
+    const imageUrl =
+      resolveProductImageUrl(detected?.image, tab.url) ||
+      (await fetchImageFromBackend(tab.url));
+    if (imageUrl) $("#f-image").value = imageUrl;
+    if (detected?.title && !$("#f-name").value) {
+      $("#f-name").value = detected.title.split(" | ")[0].split(" - ")[0].slice(0, 80);
     }
   } catch {
     // ignore — content scripts may be blocked on chrome:// pages
