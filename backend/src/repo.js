@@ -1,12 +1,13 @@
 import { db } from "./db.js";
 import { v4 as uuid } from "uuid";
+import { resolveProductImageUrl } from "./imageUrl.js";
 
 const itemRow = (r) =>
   r && {
     id: r.id,
     listId: r.list_id,
     name: r.name,
-    imageUrl: r.image_url,
+    imageUrl: resolveProductImageUrl(r.image_url, r.product_link),
     productLink: r.product_link,
     store: r.store,
     initialPrice: r.initial_price,
@@ -99,7 +100,9 @@ export const repo = {
       id,
       input.listId,
       input.name,
-      input.imageUrl ?? null,
+      input.imageUrl != null
+        ? resolveProductImageUrl(input.imageUrl, input.productLink)
+        : null,
       input.productLink ?? null,
       input.store ?? null,
       initial,
@@ -120,7 +123,14 @@ export const repo = {
   updateItem(id, patch) {
     const cur = this.getItem(id);
     if (!cur) return null;
-    const next = { ...cur, ...patch };
+    const next = {
+      ...cur,
+      ...patch,
+      imageUrl:
+        patch.imageUrl !== undefined
+          ? resolveProductImageUrl(patch.imageUrl, patch.productLink ?? cur.productLink)
+          : resolveProductImageUrl(cur.imageUrl, cur.productLink),
+    };
     db.prepare(
       `UPDATE items
        SET list_id = ?, name = ?, image_url = ?, product_link = ?, store = ?,

@@ -2,6 +2,10 @@ import express from "express";
 import cors from "cors";
 import { repo } from "./repo.js";
 import { runPriceCheck, startPriceMonitor } from "./priceMonitor.js";
+import { resolveProductImageUrl } from "./imageUrl.js";
+import { mergeIncomingItem } from "./itemMerge.js";
+import { ensureItemImageUrl, fetchProductImageUrl } from "./fetchProductImage.js";
+import { repairMissingItemImages } from "./repairImages.js";
 
 const app = express();
 app.use(cors());
@@ -42,13 +46,23 @@ app.get("/api/items/:id", (req, res) => {
   if (!item) return res.status(404).json({ error: "not found" });
   res.json({ ...item, priceHistory: repo.getPriceHistory(item.id) });
 });
-app.post("/api/items", (req, res) => {
-  const b = req.body || {};
+app.post("/api/items", async (req, res) => {
+  const b = { ...(req.body || {}) };
   if (!b.name || !b.listId) return res.status(400).json({ error: "name and listId required" });
+  if (!resolveProductImageUrl(b.imageUrl, b.productLink) && b.productLink) {
+    b.imageUrl = (await ensureItemImageUrl(b)) || b.imageUrl;
+  }
   res.status(201).json(repo.createItem(b));
 });
-app.put("/api/items/:id", (req, res) => {
-  const updated = repo.updateItem(req.params.id, req.body || {});
+app.put("/api/items/:id", async (req, res) => {
+  const patch = { ...(req.body || {}) };
+  const cur = repo.getItem(req.params.id);
+  if (!cur) return res.status(404).json({ error: "not found" });
+  if (!resolveProductImageUrl(patch.imageUrl ?? cur.imageUrl, patch.productLink ?? cur.productLink)) {
+    const fetched = await ensureItemImageUrl({ ...cur, ...patch });
+    if (fetched) patch.imageUrl = fetched;
+  }
+  const updated = repo.updateItem(req.params.id, patch);
   if (!updated) return res.status(404).json({ error: "not found" });
   res.json(updated);
 });
@@ -67,8 +81,15 @@ app.post("/api/price-check", async (_req, res) => {
   res.json(result);
 });
 
+app.post("/api/fetch-image", async (req, res) => {
+  const productLink = (req.body?.productLink || "").trim();
+  if (!productLink) return res.status(400).json({ error: "productLink required" });
+  const imageUrl = await fetchProductImageUrl(productLink);
+  res.json({ imageUrl });
+});
+
 // ---------- Sync (extension <-> backend) ----------
-app.post("/api/sync", (req, res) => {
+app.post("/api/sync", async (req, res) => {
   const incomingItems = Array.isArray(req.body?.items) ? req.body.items : [];
   const incomingLists = Array.isArray(req.body?.lists) ? req.body.lists : [];
   const lastSyncTime = req.body?.lastSyncTime || null;
@@ -118,13 +139,19 @@ app.post("/api/sync", (req, res) => {
   const knownItemIds = new Set(repo.getItems().map((i) => i.id));
   for (const it of incomingItems) {
     if (!it?.id || !it.name) continue;
-    // Don't resurrect items the dashboard deleted on the server.
     if (deletedItemIds.has(it.id)) continue;
     const safe = { ...it, listId: resolveListId(it) };
+    if (!resolveProductImageUrl(safe.imageUrl, safe.productLink) && safe.productLink) {
+      safe.imageUrl = (await ensureItemImageUrl(safe)) || safe.imageUrl;
+    }
     if (knownItemIds.has(safe.id)) {
-      repo.updateItem(safe.id, safe);
+      const serverItem = repo.getItem(safe.id);
+      repo.updateItem(safe.id, mergeIncomingItem(serverItem, safe));
     } else {
-      repo.createItem(safe);
+      repo.createItem({
+        ...safe,
+        imageUrl: resolveProductImageUrl(safe.imageUrl, safe.productLink),
+      });
     }
   }
 
@@ -150,4 +177,7 @@ const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`CartWatch backend listening on http://localhost:${PORT}`);
   startPriceMonitor();
+  repairMissingItemImages({ verbose: true }).catch((err) => {
+    console.warn("[image-repair] startup repair failed:", err.message);
+  });
 });

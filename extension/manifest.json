@@ -21,11 +21,18 @@
   },
   "permissions": ["storage", "activeTab", "scripting", "contextMenus"],
   "host_permissions": ["http://localhost:4000/*"],
+  "web_accessible_resources": [
+    {
+      "resources": ["imageUrl.js", "pickProductImage.js"],
+      "matches": ["<all_urls>"]
+    }
+  ],
   "background": { "service_worker": "background.js" },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
       "js": ["content.js"],
+      "type": "module",
       "run_at": "document_idle"
     }
   ]
