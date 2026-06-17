@@ -46,6 +46,15 @@ Typical flow
 3. Save a product from a store page
 4. Sync and view it in the dashboard — the price history updates as checks run
 
+## Configuration
+
+The dashboard reads environment variables from `dashboard/.env.local` (template in `dashboard/.env.example`). Vite only picks them up at startup, so restart `npm run dev` after changes.
+
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `VITE_API_BASE` | `http://localhost:4000` | Backend URL the dashboard talks to |
+| `VITE_ENABLE_SETTINGS` | `false` | Show the in-progress Settings page (toggles aren't wired up yet — hidden from users by default) |
+
 ## Project structure
 
 | Folder       | What it is                            |

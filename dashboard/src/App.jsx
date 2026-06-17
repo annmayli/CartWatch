@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Outlet, NavLink, useNavigate, useParams } from "react-router-dom";
 import { useStore } from "./store.jsx";
 import AddItemModal from "./components/AddItemModal.jsx";
+import { SETTINGS_ENABLED } from "./featureFlags.js";
 
 export default function App() {
   const { lists, loading, error, createList, deleteList, runPriceCheck } = useStore();
@@ -97,16 +98,18 @@ export default function App() {
           >
             Run price check
           </button>
-          <NavLink
-            to="/settings"
-            className={({ isActive }) =>
-              `btn w-full justify-start ${
-                isActive ? "bg-brand-50 font-medium text-brand-700" : "btn-ghost"
-              }`
-            }
-          >
-            Settings
-          </NavLink>
+          {SETTINGS_ENABLED && (
+            <NavLink
+              to="/settings"
+              className={({ isActive }) =>
+                `btn w-full justify-start ${
+                  isActive ? "bg-brand-50 font-medium text-brand-700" : "btn-ghost"
+                }`
+              }
+            >
+              Settings
+            </NavLink>
+          )}
         </div>
       </aside>
 
