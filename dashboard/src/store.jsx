@@ -1,5 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { api } from "./api.js";
+import { applyTheme, DEFAULT_THEME } from "./themes.js";
 
 const StoreCtx = createContext(null);
 
@@ -9,6 +10,7 @@ const defaultSettings = {
   frequency: "daily",
   emailAlerts: false,
   cloudSync: true,
+  theme: DEFAULT_THEME,
 };
 
 function loadSettings() {
@@ -29,6 +31,7 @@ export function StoreProvider({ children }) {
 
   useEffect(() => {
     localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    applyTheme(settings.theme);
   }, [settings]);
 
   const refresh = useCallback(async () => {
