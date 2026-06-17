@@ -8,3 +8,8 @@ backend/data.sqlite-wal
 .env
 .env.local
 .understand-anything/
+
+# Source-of-truth screen recordings are too big for git; commit the compressed
+# docs/demo.mp4 instead.
+docs/*.mov
+

@@ -14,6 +14,10 @@ The dashboard includes:
 
 A Chrome extension is also available for saving products while you browse. After syncing, items show up in the dashboard.
 
+## Demo
+
+<video src="docs/demo.mp4" controls width="100%"></video>
+
 ## How to run it
 
 **Prerequisites:** Node.js 18+ and npm. Chrome if you want the extension.
