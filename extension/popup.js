@@ -1,8 +1,30 @@
 import { getState, updateState, recountLists } from "./storage.js";
 import { syncWithBackend, DASHBOARD_URL, API_BASE } from "./sync.js";
 import { resolveProductImageUrl } from "./imageUrl.js";
+import { THEMES, applyTheme, loadTheme, saveTheme } from "./themes.js";
 
 const $ = (sel) => document.querySelector(sel);
+
+applyTheme(loadTheme());
+
+function renderThemePicker() {
+  const container = document.getElementById("theme-swatches");
+  if (!container) return;
+  const current = loadTheme();
+  container.innerHTML = THEMES.map((t) => {
+    const grad = `linear-gradient(135deg, ${t.swatch[0]} 0%, ${t.swatch[0]} 50%, ${t.swatch[1]} 50%, ${t.swatch[1]} 75%, ${t.swatch[2]} 75%)`;
+    return `<button class="theme-swatch${t.id === current ? " active" : ""}" data-theme-id="${t.id}" title="${t.label}" aria-label="Use ${t.label} theme" style="background: ${grad}"></button>`;
+  }).join("");
+  container.querySelectorAll(".theme-swatch").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const id = btn.dataset.themeId;
+      saveTheme(id);
+      applyTheme(id);
+      renderThemePicker();
+    });
+  });
+}
+renderThemePicker();
 
 function uuid() {
   if (crypto.randomUUID) return crypto.randomUUID();

@@ -2,17 +2,93 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ---------- Theme palettes ---------- */
+/* Values are space-separated RGB so Tailwind's `rgb(var(--x) / <alpha-value>)`
+   pattern works with opacity utilities. Keep slots in sync across themes. */
+
+:root,
+[data-theme="romantic"] {
+  --color-romantic-rose: 227 145 159;
+  --color-romantic-peach: 242 192 189;
+  --color-romantic-lime: 233 246 206;
+  --color-romantic-mint: 187 221 206;
+  --color-brand-50: 253 245 246;
+  --color-brand-100: 242 192 189;
+  --color-brand-200: 235 176 188;
+  --color-brand-500: 227 145 159;
+  --color-brand-600: 214 125 140;
+  --color-brand-700: 196 104 120;
+  --color-ink: 74 53 64;
+  --color-ink-muted: 139 107 115;
+  --color-ink-faint: 184 154 163;
+  --color-bg-base: 253 248 249;
+}
+
+[data-theme="ocean"] {
+  --color-romantic-rose: 95 163 208;
+  --color-romantic-peach: 184 221 242;
+  --color-romantic-lime: 255 244 214;
+  --color-romantic-mint: 181 227 212;
+  --color-brand-50: 240 247 251;
+  --color-brand-100: 184 221 242;
+  --color-brand-200: 149 200 229;
+  --color-brand-500: 95 163 208;
+  --color-brand-600: 74 143 191;
+  --color-brand-700: 58 119 158;
+  --color-ink: 31 58 82;
+  --color-ink-muted: 84 117 136;
+  --color-ink-faint: 149 177 193;
+  --color-bg-base: 244 250 255;
+}
+
+[data-theme="sunset"] {
+  --color-romantic-rose: 240 135 106;
+  --color-romantic-peach: 252 198 163;
+  --color-romantic-lime: 255 239 196;
+  --color-romantic-mint: 245 181 168;
+  --color-brand-50: 253 243 237;
+  --color-brand-100: 252 198 163;
+  --color-brand-200: 247 168 132;
+  --color-brand-500: 240 135 106;
+  --color-brand-600: 222 111 80;
+  --color-brand-700: 194 89 64;
+  --color-ink: 74 40 24;
+  --color-ink-muted: 139 98 73;
+  --color-ink-faint: 201 164 138;
+  --color-bg-base: 254 247 241;
+}
+
+[data-theme="lavender"] {
+  --color-romantic-rose: 184 154 214;
+  --color-romantic-peach: 232 197 221;
+  --color-romantic-lime: 245 235 201;
+  --color-romantic-mint: 205 220 193;
+  --color-brand-50: 247 240 250;
+  --color-brand-100: 232 197 221;
+  --color-brand-200: 210 175 207;
+  --color-brand-500: 184 154 214;
+  --color-brand-600: 162 130 194;
+  --color-brand-700: 135 106 166;
+  --color-ink: 61 42 74;
+  --color-ink-muted: 110 87 120;
+  --color-ink-faint: 173 148 181;
+  --color-bg-base: 250 246 252;
+}
+
+/* ---------- Page surface ---------- */
+
 html, body, #root { height: 100%; }
 
 body {
-  color: theme("colors.ink.DEFAULT");
-  background-color: #fdf8f9;
+  color: rgb(var(--color-ink));
+  background-color: rgb(var(--color-bg-base));
   background-image:
-    radial-gradient(ellipse 80% 60% at 15% 10%, rgba(242, 192, 189, 0.75) 0%, transparent 55%),
-    radial-gradient(ellipse 70% 55% at 85% 90%, rgba(187, 221, 206, 0.7) 0%, transparent 55%),
-    radial-gradient(ellipse 50% 40% at 70% 25%, rgba(233, 246, 206, 0.55) 0%, transparent 50%),
-    radial-gradient(ellipse 40% 35% at 30% 70%, rgba(227, 145, 159, 0.25) 0%, transparent 50%);
+    radial-gradient(ellipse 80% 60% at 15% 10%, rgb(var(--color-romantic-peach) / 0.75) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 55% at 85% 90%, rgb(var(--color-romantic-mint) / 0.7) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 70% 25%, rgb(var(--color-romantic-lime) / 0.55) 0%, transparent 50%),
+    radial-gradient(ellipse 40% 35% at 30% 70%, rgb(var(--color-romantic-rose) / 0.25) 0%, transparent 50%);
   background-attachment: fixed;
+  transition: background-color 0.25s ease;
 }
 
 body::before {

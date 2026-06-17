@@ -16,12 +16,44 @@ import { formatPrice, priceDelta, timeAgo } from "../utils.js";
 import AddItemModal from "../components/AddItemModal.jsx";
 import ProductImage from "../components/ProductImage.jsx";
 
+// Recharts takes color strings as props, so we resolve the active theme's
+// CSS variables to concrete `rgb(...)` values and re-read them whenever the
+// `data-theme` attribute on <html> changes.
+function readChartColors() {
+  if (typeof window === "undefined") return {};
+  const cs = getComputedStyle(document.documentElement);
+  const c = (name, alpha) => {
+    const rgb = cs.getPropertyValue(name).trim();
+    if (!rgb) return undefined;
+    return alpha != null ? `rgb(${rgb} / ${alpha})` : `rgb(${rgb})`;
+  };
+  return {
+    grid: c("--color-brand-500", 0.15),
+    axis: c("--color-ink-faint"),
+    label: c("--color-ink-muted"),
+    tooltipText: c("--color-ink"),
+    tooltipBorder: c("--color-romantic-peach", 0.6),
+    line: c("--color-brand-500"),
+  };
+}
+
+function useChartColors() {
+  const [colors, setColors] = useState(readChartColors);
+  useEffect(() => {
+    const obs = new MutationObserver(() => setColors(readChartColors()));
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    return () => obs.disconnect();
+  }, []);
+  return colors;
+}
+
 export default function ItemDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { lists, deleteItem, updateItem } = useStore();
   const [item, setItem] = useState(null);
   const [error, setError] = useState(null);
+  const chartColors = useChartColors();
   const [editing, setEditing] = useState(false);
 
   async function load() {
@@ -163,11 +195,11 @@ export default function ItemDetail() {
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data} margin={{ left: 10, right: 20, top: 10, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(227, 145, 159, 0.15)" />
-              <XAxis dataKey="label" tick={{ fontSize: 11 }} stroke="#b89aa3" />
+              <CartesianGrid strokeDasharray="3 3" stroke={chartColors.grid} />
+              <XAxis dataKey="label" tick={{ fontSize: 11 }} stroke={chartColors.axis} />
               <YAxis
                 tick={{ fontSize: 11 }}
-                stroke="#b89aa3"
+                stroke={chartColors.axis}
                 domain={[
                   (dataMin) => Math.floor(dataMin * 0.95),
                   (dataMax) => Math.ceil(dataMax * 1.05),
@@ -176,23 +208,23 @@ export default function ItemDetail() {
               />
               <Tooltip
                 formatter={(v) => formatPrice(v)}
-                labelStyle={{ color: "#4a3540" }}
+                labelStyle={{ color: chartColors.tooltipText }}
                 contentStyle={{
                   borderRadius: 12,
-                  border: "1px solid rgba(242, 192, 189, 0.6)",
+                  border: `1px solid ${chartColors.tooltipBorder}`,
                   background: "rgba(255, 255, 255, 0.9)",
                 }}
               />
               <ReferenceLine
                 y={item.initialPrice}
-                stroke="#b89aa3"
+                stroke={chartColors.axis}
                 strokeDasharray="4 4"
-                label={{ value: "initial", fontSize: 10, fill: "#8b6b73", position: "right" }}
+                label={{ value: "initial", fontSize: 10, fill: chartColors.label, position: "right" }}
               />
               <Line
                 type="monotone"
                 dataKey="price"
-                stroke="#E3919F"
+                stroke={chartColors.line}
                 strokeWidth={2.5}
                 dot={{ r: 3 }}
                 activeDot={{ r: 5 }}

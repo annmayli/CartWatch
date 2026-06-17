@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Outlet, NavLink, useNavigate, useParams } from "react-router-dom";
 import { useStore } from "./store.jsx";
 import AddItemModal from "./components/AddItemModal.jsx";
+import ThemePicker from "./components/ThemePicker.jsx";
 import { SETTINGS_ENABLED } from "./featureFlags.js";
 
 export default function App() {
@@ -88,7 +89,8 @@ export default function App() {
           ))}
         </nav>
 
-        <div className="mt-4 space-y-2 border-t border-romantic-peach/50 pt-4">
+        <div className="mt-4 space-y-3 border-t border-romantic-peach/50 pt-4">
+          <ThemePicker />
           <button
             className="btn btn-ghost w-full justify-start"
             onClick={async () => {

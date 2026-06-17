@@ -2,6 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      try {
+        var t = localStorage.getItem("wishlist-theme");
+        if (t) document.documentElement.setAttribute("data-theme", t);
+      } catch (_) {}
+    </script>
     <link rel="stylesheet" href="popup.css" />
   </head>
   <body>
@@ -64,6 +70,11 @@
         <ul id="lists" class="lists"></ul>
       </section>
     </main>
+
+    <div class="theme-row">
+      <span class="muted">Theme</span>
+      <div id="theme-swatches" class="swatches"></div>
+    </div>
 
     <footer>
       <span id="sync-status" class="status muted">Local only</span>

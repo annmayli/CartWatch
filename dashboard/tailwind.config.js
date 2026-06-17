@@ -5,23 +5,23 @@ export default {
     extend: {
       colors: {
         romantic: {
-          rose: "#E3919F",
-          peach: "#F2C0BD",
-          lime: "#E9F6CE",
-          mint: "#BBDDCE",
+          rose: "rgb(var(--color-romantic-rose) / <alpha-value>)",
+          peach: "rgb(var(--color-romantic-peach) / <alpha-value>)",
+          lime: "rgb(var(--color-romantic-lime) / <alpha-value>)",
+          mint: "rgb(var(--color-romantic-mint) / <alpha-value>)",
         },
         brand: {
-          50: "#fdf5f6",
-          100: "#F2C0BD",
-          200: "#ebb0bc",
-          500: "#E3919F",
-          600: "#d67d8c",
-          700: "#c46878",
+          50: "rgb(var(--color-brand-50) / <alpha-value>)",
+          100: "rgb(var(--color-brand-100) / <alpha-value>)",
+          200: "rgb(var(--color-brand-200) / <alpha-value>)",
+          500: "rgb(var(--color-brand-500) / <alpha-value>)",
+          600: "rgb(var(--color-brand-600) / <alpha-value>)",
+          700: "rgb(var(--color-brand-700) / <alpha-value>)",
         },
         ink: {
-          DEFAULT: "#4a3540",
-          muted: "#8b6b73",
-          faint: "#b89aa3",
+          DEFAULT: "rgb(var(--color-ink) / <alpha-value>)",
+          muted: "rgb(var(--color-ink-muted) / <alpha-value>)",
+          faint: "rgb(var(--color-ink-faint) / <alpha-value>)",
         },
       },
       fontFamily: {
@@ -38,8 +38,8 @@ export default {
         ],
       },
       boxShadow: {
-        soft: "0 4px 24px -4px rgba(227, 145, 159, 0.18)",
-        card: "0 2px 16px -2px rgba(74, 53, 64, 0.08)",
+        soft: "0 4px 24px -4px rgb(var(--color-brand-500) / 0.18)",
+        card: "0 2px 16px -2px rgb(var(--color-ink) / 0.08)",
       },
     },
   },

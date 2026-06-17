@@ -1,16 +1,55 @@
 * { box-sizing: border-box; }
 
-:root {
+/* ---------- Theme palettes ----------
+   Keep slots in sync with `dashboard/src/index.css` and `extension/themes.js`. */
+
+:root,
+[data-theme="romantic"] {
   --rose: #E3919F;
   --rose-hover: #d67d8c;
   --peach: #F2C0BD;
   --lime: #E9F6CE;
   --mint: #BBDDCE;
   --bg: #fdf8f9;
-  --bg-soft: rgba(255, 255, 255, 0.75);
-  --border: rgba(242, 192, 189, 0.55);
   --text: #4a3540;
   --text-muted: #8b6b73;
+}
+
+[data-theme="ocean"] {
+  --rose: #5FA3D0;
+  --rose-hover: #4a8fbf;
+  --peach: #B8DDF2;
+  --lime: #FFF4D6;
+  --mint: #B5E3D4;
+  --bg: #f4faff;
+  --text: #1f3a52;
+  --text-muted: #547588;
+}
+
+[data-theme="sunset"] {
+  --rose: #F0876A;
+  --rose-hover: #de6f50;
+  --peach: #FCC6A3;
+  --lime: #FFEFC4;
+  --mint: #F5B5A8;
+  --bg: #fef7f1;
+  --text: #4a2818;
+  --text-muted: #8b6249;
+}
+
+[data-theme="lavender"] {
+  --rose: #B89AD6;
+  --rose-hover: #a282c2;
+  --peach: #E8C5DD;
+  --lime: #F5EBC9;
+  --mint: #CDDCC1;
+  --bg: #faf6fc;
+  --text: #3d2a4a;
+  --text-muted: #6e5778;
+}
+
+:root {
+  --bg-soft: rgba(255, 255, 255, 0.75);
   --success: #5a8f7a;
   --danger: #c46878;
 }
@@ -22,11 +61,18 @@ html, body {
   color: var(--text);
   background-color: var(--bg);
   background-image:
-    radial-gradient(ellipse 80% 60% at 15% 10%, rgba(242, 192, 189, 0.75) 0%, transparent 55%),
-    radial-gradient(ellipse 70% 55% at 85% 90%, rgba(187, 221, 206, 0.7) 0%, transparent 55%),
-    radial-gradient(ellipse 50% 40% at 70% 25%, rgba(233, 246, 206, 0.55) 0%, transparent 50%);
+    radial-gradient(ellipse 80% 60% at 15% 10%, color-mix(in srgb, var(--peach) 75%, transparent) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 55% at 85% 90%, color-mix(in srgb, var(--mint) 70%, transparent) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 70% 25%, color-mix(in srgb, var(--lime) 55%, transparent) 0%, transparent 50%);
   width: 400px;
   min-height: 500px;
+  transition: background-color 0.2s ease;
+}
+
+/* Border uses the soft accent of the active theme. */
+:root,
+[data-theme] {
+  --border: color-mix(in srgb, var(--peach) 55%, transparent);
 }
 
 body {
@@ -247,4 +293,35 @@ footer {
   color: var(--text-muted);
   padding: 18px 0;
   font-size: 12px;
+}
+
+.theme-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-top: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(6px);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  position: relative;
+  z-index: 1;
+}
+.theme-row .swatches { display: flex; gap: 5px; margin-left: auto; }
+.theme-swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  padding: 0;
+  background-clip: padding-box;
+  transition: transform 0.1s ease;
+}
+.theme-swatch:hover { transform: scale(1.1); }
+.theme-swatch.active {
+  outline: 2px solid var(--rose);
+  outline-offset: 1px;
 }
